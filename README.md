@@ -2,6 +2,26 @@
 
 FlexVM is a simple command line tool to access and manage your servers via the console. With some basic commands you can view the states of your virtual servers, and do everything from creation to deletion. 
 
+Available Commands
+
+```
+	build <virtual_machine_id> - builds specified vm
+	create - creates a new vm
+	delete <virtual_machine_id>
+	edit <virtual_machine_id>
+	ls/list - returns a quick overview of your machines
+	get - returns a complete list of all your virtual machines
+	get <virtual_machine_id> - returns a complete list of all your machines
+	search <label>- searches for VMs with full or partial matches
+	shutdown <virtual_machine_id> - shutdown specified virtual machine
+	status - returns list of all your VMs and statuses
+	status <virtual_machine_id> - returns status of specified vm
+	stop <virtual_machine_id> - stops specified virtual machine
+	startup <virtual_machine_id> - starts specified virtual machine
+	reboot <virtual_machine_id> - reboots specified virtual machine
+	test - test your authentication and URL endpoints'
+```
+	
 ## 1. Download
 Visit https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
 You will see a link to download the script. Click the link to download the latest version, save it to an appropriate directory like /usr/local/. Alternatively you can use wget to download.
@@ -110,4 +130,4 @@ We can then use another “ls” call to ensure any pending changes:
 
 We can see that this machine is now shutdown, for more details on working with FlexCLI, checkout: https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
 
-	
+
