@@ -67,7 +67,7 @@ When you’re ready to start executing commands, check out the available command
 Here is an example using the FlexCLI to create a new server. 
 
  ```
- $ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza"             --label="zaza" --primary_disk_size="5" --memory="500"
+ $ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza" --label="zaza" --primary_disk_size="5" --memory="500"
 ```  
 
 The required parameters used are:
