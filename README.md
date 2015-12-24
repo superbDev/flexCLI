@@ -30,21 +30,14 @@ You can provide the credentials when making each request using –u <accountID> 
 
 Alternatively you can store your configuration in a separate file.
 
-### a. First download the example configuration file. A link can be found here: https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
-Or from the console:
-
-```
-  $ wget https://mycp.superb.net/flexapi/flexConfig.ini
-```
-
-### b. Edit the example config file by substituting <account_id> with your Account ID and <API_Key> with your API key. The modified file should look something like this:
+### a. Edit the example config file by substituting <account_id> with your Account ID and <API_Key> with your API key. The modified file should look something like this:
 
 ```  
   user=7654321
   password=7231caea9926b0227beda2e31bc08f012b52dee6
 ```
   
-### c. Include the config file by declaring the --config parameter on execution:
+### b. Include the config file by declaring the --config parameter on execution:
  
 When working with multiple Flex Cloud accounts, use separate configuration files to store your credentials. So if you had two Flex Cloud accounts, one at the Springfield datacenter and another in Seattle, create two separate config files such as: “springConf.ini” and “seattleConf.ini”
 
