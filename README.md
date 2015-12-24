@@ -1,21 +1,21 @@
-# flexCLI
 FlexVM command line control (For UNIX systems only)
 FlexVM is a simple command line tool to access and manage your servers via the console. With some basic commands you can view the states of your virtual servers, and do everything from creation to deletion. 
 
 1. Download
 Visit https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
-You will see a link to download the script. Click the link to download the file, save it to an appropriate directory like /usr/local/flexTools. Alternatively you can use wget to download.
-In your terminal, navigate to desired directory then:
+You will see a link to download the script. Click the link to download the latest version, save it to an appropriate directory like /usr/local/. Alternatively you can use wget to download.
+In your terminal, navigate to desired directory download and then unpack:
 
-  $ wget http://mycp.superb.net/flexapi/flexCLI.sh
+  $ wget https://github.com/superbDev/flexCLI/archive/v1.0.tar.gz
+  $ tar -zxvf v1.0.tar.gz
 
 Then modify the permissions so that it can be executed:
   
-  $ chmod 700 /usr/local/flexTools/flexCLI.sh 
+  $ chmod 700 /usr/local/flexCLI<Version>/flexCLI.sh 
 
 This will give only you access to read+write+execute. (Use chmod 777 to grant all users/groups read+write+execute permissions).
 
-2.	Authenticate
+2. Authentication
 When using the flexCLI tool it is necessary to provide your basic authentication credentials. You will need your accountID and your API key. (Please note that if you have multiple Flex Cloud accounts each one will need its own API key.)
 
 You can provide the credentials when making each request using –u <accountID> –p <API Key> flags. Test your credentials with the “test” request:
@@ -23,27 +23,29 @@ You can provide the credentials when making each request using –u <accountID> 
   $ ./flexCLI.sh test -u 712345 -p 7519caea9926a0227debb2e36bc08f012b52dee6
 
 Alternatively you can store your configuration in a separate file.
-a.	First download the example configuration file. A link can be found here: https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
+
+a. First download the example configuration file. A link can be found here: https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
 Or from the console:
 
   $ wget https://mycp.superb.net/flexapi/flexConfig.ini
  
-b.	Edit the example config file by substituting <account_id> with your Account ID and <API_Key> with your API key. The modified file should look something like this:
+b. Edit the example config file by substituting <account_id> with your Account ID and <API_Key> with your API key. The modified file should look something like this:
   ....
   user=7654321
   password=7231caea9926b0227beda2e31bc08f012b52dee6
   ....
-c.	Include the config file by declaring the --config parameter on execution:
+  
+c. Include the config file by declaring the --config parameter on execution:
  
 When working with multiple Flex Cloud accounts, use separate configuration files to store your credentials. So if you had two Flex Cloud accounts, one at the Springfield datacenter and another in Seattle, create two separate config files such as: “springConf.ini” and “seattleConf.ini”
 
-3.	Executing commands
+3. Executing commands
 When you’re ready to start executing commands, check out the available commands at: https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
 
 Here is an example using the FlexCLI to create a new server. 
-  ...
+  
   $ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza"             --label="zaza" --primary_disk_size="5" --memory="500"
-  ...
+  
 The required parameters used are:
 
 --primary_disk_type: SSD (solid state) or HDD (hard disk)
