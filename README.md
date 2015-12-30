@@ -97,7 +97,7 @@ Alternatively, the “help” command provides details on parameters used when a
 The “ls” command is an excellent way to check on the current state (either running, shutdown, or building) of your machines.
 
 ```
-  $ ./flexVM ls --config="flexConfig.ini"
+  $ ./flexCLI.sh ls --config="flexConfig.ini"
 	|--id--|--------label-------|---ip-address---|--memory--|-storage-|---status---|
 	|   511|          hostOmatic|   192.168.000.1|       500|       31|     running|
 	|   561|         emailServer|   192.168.000.1|      1500|        7|    building|
@@ -111,14 +111,14 @@ You can see how much memory and storage they have, get ip addresses, and retriev
 Let’s say we decide we want to shutdown “hosteria” (at the bottom), we get the id 589 and then call the stop command:
 
 ``` 
-	$ ./flexVM stop 589 --config="flexConfig.ini"
+	$ ./flexCLI.sh stop 589 --config="flexConfig.ini"
 	Success
 ```
 
 We can then use another “ls” call to ensure any pending changes:
 
 ```
-	$ ./flexVM ls --config="flexConfig.ini"
+	$ ./flexCLI.sh ls --config="flexConfig.ini"
 	|--id--|--------label-------|---ip-address---|--memory--|-storage-|---status---|
 	|   511|          hostOmatic|   192.168.000.1|       500|       31|     running|
 	|   561|         emailServer|   192.168.000.1|      1500|        7|    building|
