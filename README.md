@@ -38,7 +38,8 @@ When using the flexCLI tool it is necessary to provide your basic authentication
 You can provide the credentials when making each request using –u <accountID> –p <API Key> flags. Test your credentials with the “test” request:
 
 ```
-  $ ./flexCLI.sh test -u 712345 -p 7519caea9926a0227debb2e36bc08f012b52dee6
+  $ cd usr/local/flexCLI-1.0 
+  usr/local/flexCLI-1.0$ ./flexCLI.sh test -u 712345 -p 7519caea9926a0227debb2e36bc08f012b52dee6
 ```
 
 ### Alternatively you can store your configuration in a separate file.
@@ -60,7 +61,7 @@ When you’re ready to start executing commands, check out the available command
 Here is an example using the FlexCLI to create a new server. 
 
  ```
- $ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza" --label="zaza" --primary_disk_size="5" --memory="500"
+ usr/local/flexCLI-1.0$ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza" --label="zaza" --primary_disk_size="5" --memory="500"
 ```  
 
 The required parameters used are:
@@ -90,7 +91,7 @@ Alternatively, the “help” command provides details on parameters used when a
 The “ls” command is an excellent way to check on the current state (either running, shutdown, or building) of your machines.
 
 ```
-  $ ./flexCLI.sh ls --config="flexConfig.ini"
+  usr/local/flexCLI-1.0$ ./flexCLI.sh ls --config="flexConfig.ini"
 	|--id--|--------label-------|---ip-address---|--memory--|-storage-|---status---|
 	|   511|          hostOmatic|   192.168.000.1|       500|       31|     running|
 	|   561|         emailServer|   192.168.000.1|      1500|        7|    building|
@@ -104,14 +105,14 @@ You can see how much memory and storage they have, get ip addresses, and retriev
 Let’s say we decide we want to shutdown “hosteria” (at the bottom), we get the id 589 and then call the stop command:
 
 ``` 
-	$ ./flexCLI.sh stop 589 --config="flexConfig.ini"
+	usr/local/flexCLI-1.0$ ./flexCLI.sh stop 589 --config="flexConfig.ini"
 	Success
 ```
 
 We can then use another “ls” call to ensure any pending changes:
 
 ```
-	$ ./flexCLI.sh ls --config="flexConfig.ini"
+	usr/local/flexCLI-1.0$ ./flexCLI.sh ls --config="flexConfig.ini"
 	|--id--|--------label-------|---ip-address---|--memory--|-storage-|---status---|
 	|   511|          hostOmatic|   192.168.000.1|       500|       31|     running|
 	|   561|         emailServer|   192.168.000.1|      1500|        7|    building|
