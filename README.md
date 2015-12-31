@@ -31,13 +31,6 @@ In your terminal, navigate to desired directory download and then unpack:
   $ wget https://github.com/superbDev/flexCLI/archive/v1.0.tar.gz
   $ tar -zxvf v1.0.tar.gz
 ```
-Then modify the permissions so that it can be executed:
-
-```  
-  $ chmod 700 /usr/local/flexCLI<Version>/flexCLI.sh 
-```
-
-This will give only you access to read+write+execute. (Use chmod 777 to grant all users/groups read+write+execute permissions).
 
 ## 2. Authentication
 When using the flexCLI tool it is necessary to provide your basic authentication credentials. You will need your accountID and your API key. (Please note that if you have multiple Flex Cloud accounts each one will need its own API key.)
