@@ -28,8 +28,9 @@ You will see a link to download the script. Click the link to download the lates
 In your terminal, navigate to desired directory download and then unpack:
 
 ```
-  $ wget https://github.com/superbDev/flexCLI/archive/v1.1.tar.gz
-  $ tar -zxvf v1.1.tar.gz
+  $ cd /usr/local
+  /usr/local$ wget https://github.com/superbDev/flexCLI/archive/v1.1.tar.gz
+  /usr/local$ tar -zxvf v1.1.tar.gz
 ```
 
 ## 2. Authentication
