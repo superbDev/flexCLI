@@ -29,7 +29,7 @@ In your terminal, navigate to desired directory download and then unpack:
 
 ```
   $ wget https://github.com/superbDev/flexCLI/archive/v1.1.tar.gz
-  $ tar -zxvf v1.0.tar.gz
+  $ tar -zxvf v1.1.tar.gz
 ```
 
 ## 2. Authentication
