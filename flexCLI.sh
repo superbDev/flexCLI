@@ -2,12 +2,9 @@
 
 # FlexCloud Command Tool
 baseurl='https://mycp.superb.net/flexapi'
-#baseurl='http://mycp.sraaum.superb.net/flexapi'
-#if [ -z "$VAR" ];
-#then
+
 user='null'
 password='null'
-#fi
 
 format="0"
 #formats results returned to a more human readible
