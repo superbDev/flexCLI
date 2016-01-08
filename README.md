@@ -7,8 +7,9 @@ Available Commands
 ```
 	build <virtual_machine_id> - builds specified vm
 	create - creates a new vm
-	delete <virtual_machine_id>
-	edit <virtual_machine_id>
+	delete <virtual_machine_id> - delete specified vm
+	edit <virtual_machine_id> - edit specified vm
+	help - shows available commands and syntax
 	ls/list - returns a quick overview of your machines
 	get - returns a complete list of all your virtual machines
 	get <virtual_machine_id> - returns a complete list of all your machines
