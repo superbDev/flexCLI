@@ -33,6 +33,7 @@ help_function(){
 	create - creates a new vm
 	delete <virtual_machine_id>
 	edit <virtual_machine_id>
+	help - shows this
 	ls/list - returns a quick overview of your machines
 	get - returns a complete list of all your virtual machines
 	get <virtual_machine_id> - returns a complete list of all your machines
@@ -42,15 +43,18 @@ help_function(){
 	status <virtual_machine_id> - returns status of specified vm
 	stop <virtual_machine_id> - stops specified virtual machine
 	startup <virtual_machine_id> - starts specified virtual machine
+	test - test your api connection/credentials
 	reboot <virtual_machine_id> - reboots specified virtual machine'
 	echo
 	echo 'use -f to format json output vertically'
 	echo
-	echo 'specify authorization with: -u <account id> -p <api key>'
-	echo 
-	echo 'To specify options when using build/create/edit use "--" to indicate which parameter you would like to change, followed by "=<value>"'
-	echo 'example: $ create --memory=966 --label="super server"...'
+	echo 'Specify authorization with: -u <account id> -p <api key> or with an external configuration file using --config'
+	echo '	config file example: $ ./flexCLI.sh test --config=flexConfig.ini'
 	echo
+	echo 'To specify options when using build/create/edit use "--" to indicate which parameter you would like to change, followed by "=<value>"'
+	echo '	example: $ ./flexCLI.sh create --memory=966 --label="super server"...'
+	echo
+	echo "Virtual Machine Parameters:"
 	echo "	memory* - amount of RAM assigned to the VS
 	cpus* - number of CPUs assigned to the VS
 	cpu_shares* - required parameter. For KVM hypervisor the CPU priority value is always 100. For XEN, set a custom value. The default value for XEN is 1
@@ -394,8 +398,8 @@ parse_config(){
 
 echoerr() { echo "$@" 1>&2; }
 
-command=$1; #Get command and shift
-shift
+#command=$1; #Get command and shift
+#shift
 
 args=()
 for i in "$@"; do
@@ -428,15 +432,15 @@ while [ $j -lt $arrayLength ]
 			curlOpts=$curlOpts" -i"
 			j=$(($j + 1))
 		;;
-		-c)
-			. ${args[(($j+1))]}
-			j=$(($j + 1))
-		;;
 		--config=*)
 			val=${args[$j]}
 			val=${val#--*=}
 			parse_config $val
 			baseurl=${baseurl//[$'\t\r\n']}
+			j=$(($j + 1))
+		;;
+		build|create|delete|edit|help|ls|list|get|search|shutdown|status|status|stop|startup|test|reboot)
+			command=${args[$j]}
 			j=$(($j + 1))
 		;;
 		*)
