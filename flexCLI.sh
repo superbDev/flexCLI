@@ -7,7 +7,7 @@ user='null'
 password='null'
 
 format="0"
-#formats results returned to a more human readible
+#formats returned results to be more human readible
 format_string(){
 if [ $format == "1" ]
 then
@@ -25,9 +25,9 @@ fi
 }
 
 help_function(){
-	echo 'Virtual server command line interface'
-	echo
-	echo 'Available commands:
+	echo 'Virtual server command line interface
+	
+    Available commands:
 
 	build <virtual_machine_id> - builds specified vm
 	create - creates a new vm
@@ -44,18 +44,18 @@ help_function(){
 	stop <virtual_machine_id> - stops specified virtual machine
 	startup <virtual_machine_id> - starts specified virtual machine
 	test - test your api connection/credentials
-	reboot <virtual_machine_id> - reboots specified virtual machine'
-	echo
-	echo 'use -f to format json output vertically'
-	echo
-	echo 'Specify authorization with: -u <account id> -p <api key> or with an external configuration file using --config'
-	echo '	config file example: $ ./flexCLI.sh test --config=flexConfig.ini'
-	echo
-	echo 'To specify options when using build/create/edit use "--" to indicate which parameter you would like to change, followed by "=<value>"'
-	echo '	example: $ ./flexCLI.sh create --memory=966 --label="super server"...'
-	echo
-	echo "Virtual Machine Parameters:"
-	echo "	memory* - amount of RAM assigned to the VS
+	reboot <virtual_machine_id> - reboots specified virtual machine
+	
+	use -f to format json output vertically
+	
+	Specify authorization with: -u <account id> -p <api key> or with an external configuration file using --config
+	config file example: $ ./flexCLI.sh test --config=flexConfig.ini
+	
+	To specify options when using build/create/edit use "--" to indicate which parameter you would like to change, followed by "=<value>"
+	example: $ ./flexCLI.sh create --memory=966 --label="super server"...
+
+	Virtual Machine Parameters:
+	memory* - amount of RAM assigned to the VS
 	cpus* - number of CPUs assigned to the VS
 	cpu_shares* - required parameter. For KVM hypervisor the CPU priority value is always 100. For XEN, set a custom value. The default value for XEN is 1
 	hostname* - set the host name for this VS
@@ -75,7 +75,7 @@ help_function(){
 	admin_note - enter a brief comment for the VS. Optional parameter
 	note - a brief comment a user can add to a VS
 	template_id* - the ID of a template from which a VS should be built
-	initial_root_password - the root password for a VS. Optional, if none specified, the system will provide a random password. It can consist of 6-32 characters, letters [A-Za-z], digits [0-9], dash [ - ] and lower dash [ _ ]. You can use both lower- and uppercase letters"
+	initial_root_password - the root password for a VS. Optional, if none specified, the system will provide a random password. It can consist of 6-32 characters, letters [A-Za-z], digits [0-9], dash [ - ] and lower dash [ _ ]. You can use both lower- and uppercase letters'
 }
 
 create_function(){
@@ -86,7 +86,7 @@ create_function(){
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X POST --data "$createVals" $baseurl/virtual_machines;`
-	format_string "$results"
+	process_results "$results"
 }
 
 edit_function(){
@@ -102,17 +102,7 @@ edit_function(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X PUT --data "$editVals" $URI;`
-		
-		len=$results
-		len=$((${#results} - 3))
-		code=${results:$len:3}
-		body=${results:0:len}
-		if [ $code -eq 204 ] 
-		then
-			echo Success
-		else
-			echo Failure
-		fi
+		process_results "$results"
 	else
 		echo "Please provide an id"
 		echo "edit <virtual_machine_id>"
@@ -131,7 +121,7 @@ delete_function(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X DELETE $URI;`
-		deleteResults "$results"
+		process_results "$results"
 	else
 		echo "Please provide an id"
 		echo "delete <virtual_machine_id>"
@@ -150,7 +140,7 @@ build_function(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X POST --data "$createVals" $URI;`
-		postResults "$results"
+		process_results "$results"
 	else
 
 	echo "Please provide an id"
@@ -173,7 +163,7 @@ get_function(){
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X GET $URI;`
-	format_string "$results"
+	process_results "$results"
 }
 
 overview_function(){
@@ -204,7 +194,7 @@ then
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X POST --data "$createVals" $URI;`
-	postResults "$results"
+	process_results "$results"
 else
 
 	echo "Please provide an id"
@@ -226,7 +216,7 @@ then
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X GET $URI;`
-	format_string "$results"
+	process_results "$results"
 else
 	echo no label provided to search for.
 fi
@@ -248,7 +238,7 @@ status_function(){
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X GET $URI;`
-	format_string "$results"
+	process_results "$results"
 }
 
 stop_function(){
@@ -262,7 +252,7 @@ stop_function(){
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X POST $URI;`
-	postResults "$results";
+	process_results "$results";
 	
 	else
 	echo "Please provide an id"
@@ -283,7 +273,7 @@ startup_function(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X POST $URI;`
-		postResults "$results";
+		process_results "$results";
 		
 	else
 		echo "Please provide an id"
@@ -302,7 +292,7 @@ shutdown_function(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X POST $URI;`
-		postResults "$results"
+		process_results "$results"
 	else
 		echo "Please provide an id"
 		echo "startup <virtual_machine_id>"
@@ -317,16 +307,15 @@ test_function(){
 	-H "Content-Type:application/json" \
 	--fail --show-error \
 	-X GET $URI;`
-getResults "$results"
-	
+	process_results "$results"
 }
 
-postResults(){
+proccess_results(){
 len=$1
 len=$((${#results} - 3))
 		code=${results:$len:3}
 		body=${results:0:len}
-		if [ $code -eq 201 ] 
+		if [ $code -eq 201 ] || [ $code -eq 204 ] || [ $code -eq 200 ] 
 		then
 			echo Success
 		else
@@ -338,43 +327,6 @@ len=$((${#results} - 3))
 			fi
 		fi
 }
-
-getResults(){
-len=$1
-len=$((${#results} - 3))
-		code=${results:$len:3}
-		body=${results:0:len}
-		if [ $code -eq 200 ] 
-		then
-			echo Success
-		else
-			if [ ${#body} -gt "0" ]
-			then
-				echoerr "Error With Request:"$body
-			else 
-				echoerr "Request Error"
-			fi
-		fi
-}
-
-deleteResults(){
-len=$1
-len=$((${#results} - 3))
-		code=${results:$len:3}
-		body=${results:0:len}
-		if [ $code -eq 204 ] 
-		then
-			echo Success
-		else
-			if [ ${#body} -gt "0" ]
-			then
-				echoerr "Error With Request:"$body
-			else 
-				echoerr "Request Error"
-			fi
-		fi
-}
-
 
 parse_config(){
 	while read line || [[ -n "$line" ]];
@@ -396,10 +348,15 @@ parse_config(){
 	done <$1	
 }
 
-echoerr() { echo "$@" 1>&2; }
+input_check(){
+	if [ "$user" == 'null'] || [ "$password" == 'null' ]
+	then
+		echo 'missing user/password use the -u and -p flags: -u <account id> -p <api key> or include them in a configuration file using --config="flexConfig.ini"'
+		exit 1
+	fi
+}
 
-#command=$1; #Get command and shift
-#shift
+echoerr() { echo "$@" 1>&2; }
 
 args=()
 for i in "$@"; do
@@ -407,7 +364,7 @@ for i in "$@"; do
 done
 
 j="0"
-functionVars=()
+function_vars=()
 arrayLength=${#args[@]}
 while [ $j -lt $arrayLength ]
 	do
@@ -456,27 +413,14 @@ while [ $j -lt $arrayLength ]
 				keyVals=$keyVals'"'$key'"':'"'$val'",'
 				j=$(($j + 1))
 			else
-				functionVars+=($input)
+				function_vars+=($input)
 				j=$(($j + 1))
 			fi
 		;;
 	esac
 done
 
-keyVals=${keyVals%,}
-
-input_check(){
-	if [ "$user" == 'null' ]
-	then
-		echo "missing user/password use the -u and -p flags: -u <account id> -p <api key>"
-		exit 1
-	fi
-	if [ "$password" == 'null' ]
-	then
-		echo "missing user/password use the -u and -p flags: -u <account id> -p <api key>"
-		exit 1
-	fi
-}
+key_vals=${keyVals%,}
 
 case $command in
    
@@ -550,10 +494,10 @@ case $command in
 		exit
 		;;
 	*)
-	echo 'Command not recognized!'
-	help_function
-		exit
-		;;
+		echo 'Command not recognized!'
+		help_function
+			exit
+			;;
 esac
 
 
