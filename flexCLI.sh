@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+#set -x
 # FlexCloud Command Tool
 baseurl='https://mycp.superb.net/flexapi'
 
@@ -9,9 +9,7 @@ password='null'
 format="0"
 #formats returned results to be more human readible
 format_string(){
-if [ $format == "1" ]
-then
-	results=$1
+	results="$1"
 	results="${results//':{'/':{
 	'}"
 	results="${results//,/',
@@ -19,9 +17,6 @@ then
 	results="${results//'}},'/'}},
 	'}"
 	echo "$results"
-else 
-	echo $1
-fi
 }
 
 help_function(){
@@ -71,170 +66,99 @@ help_function(){
 	rate_limit - set max port speed. Optional parameter: if none set, the system sets port speed to unlimited
 	required_virtual_machine_build* - set to 1 to build VS automatically
 	required_virtual_machine_startup - set to 1 to start up the VS automatically, otherwise set 0 (default state is '1')
-	required_ip_address_assignment* - set to '1' if you want IP address to be assigned automatically after creation. Otherwise set '0'
+	required_ip_address_assignment* - set to "1" if you want IP address to be assigned automatically after creation. Otherwise set '0'
 	admin_note - enter a brief comment for the VS. Optional parameter
 	note - a brief comment a user can add to a VS
 	template_id* - the ID of a template from which a VS should be built
 	initial_root_password - the root password for a VS. Optional, if none specified, the system will provide a random password. It can consist of 6-32 characters, letters [A-Za-z], digits [0-9], dash [ - ] and lower dash [ _ ]. You can use both lower- and uppercase letters'
 }
 
+check_for_vmid(){
+	if [ ${#function_vars[@]} -eq "0" ]
+	then 
+		echo "Please provide an id:
+$command <virtual_machine_id>"
+		exit 1
+	fi
+}
+
 create_function(){
+	URI=$baseurl/virtual_machines;
 	createVals='{"virtual_machine":{'$key_vals'}}'
-	results=`curl -sL $curlOpts -w "%{http_code}" \
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	-X POST --data "$createVals" $baseurl/virtual_machines;`
-	process_results "$results"
+	curl_post_request "$createVals"
 }
 
 edit_function(){
 	editVals='{"virtual_machine":{'$key_vals'}}'
-	URI=$baseurl/virtual_machines;
-
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
-		URI=$URI/${function_vars[0]}
-		curl_put_request $editVals 
-	else
-		echo "Please provide an id:"
-		echo "edit <virtual_machine_id>"
-	fi
-
+	URI=$baseurl/virtual_machines/${function_vars[0]};
+	curl_put_request "$editVals"
 }
 
-delete_function(){
-	URI=$baseurl/virtual_machines;
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
-		URI=$URI/${function_vars[0]}
-		curl_delete_request
-	else
-		echo "Please provide an id:"
-		echo "delete <virtual_machine_id>"
 
-	fi
+
+delete_function(){
+	URI=$baseurl/virtual_machines/${function_vars[0]};
+	curl_delete_request
 }
 
 build_function(){
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
 		URI=$baseurl/virtual_machines/${function_vars[0]}/build
 		createVals='{"virtual_machine":{'$key_vals'}}'
-		curl_post_with_send $createVals
-	else
-
-	echo "Please provide an id:"
-	echo "build <virtual_machine_id>"
-
-	fi
+		curl_post_request "$createVals"
 }
 
 get_function(){
-
 	URI=$baseurl/virtual_machines;
-
 	if [ ${#function_vars[@]} -gt "0" ]
 	then 
 		URI=$URI/${function_vars[0]}
 	fi
-	curl_get_no_std_out
+	curl_get_request
 }
 
 overview_function(){
-
 	URI=$baseurl/virtual_machines/overview
-	
 	if [ ${#function_vars[@]} -gt "0" ]
 	then 
 		URI="$URI"/${function_vars[0]}
 	fi
-	results=`curl -s $curlOpts \
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X GET $URI;`
-	echo -e "$results";
+	curl_get_request
 }
 
 reboot_function(){
-
-if [ ${#function_vars[@]} -gt "0" ]
-then 
 	URI=$baseurl/virtual_machines/${function_vars[0]}/reboot
 	curl_post_request
-else
-	echo 
-	echo "Please provide an id"
-	echo "reboot <virtual_machine_id>"
-
-fi
 }
 
 search_function(){
-
-URI=$baseurl/virtual_machines;
-
-if [ ${#function_vars[@]} -gt "0" ]
-then 
-	URI=$URI?q=${function_vars[0]}
-	curl_get_no_write
-else
-	echo no label provided to search for.
-fi
+	URI=$baseurl/virtual_machines?q=${function_vars[0]}; 
+	curl_get_request
 }
 
 status_function(){
-
 	URI=$baseurl/virtual_machines;
-
 	if [ ${#function_vars[@]} -gt "0" ]
 	then 
 		URI=$URI/${function_vars[0]}
 	fi
-
 	URI=$URI/status
-	curl_get_no_std_out
+	curl_get_request
 }
 
 stop_function(){
-
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
 	URI=$baseurl/virtual_machines/${function_vars[0]}/stop
 	curl_post_request
-	
-	else
-		echo "Please provide an id"
-		echo "stop <virtual_machine_id>"
-	fi
 }
 
 
 startup_function(){
-
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
-		URI=$baseurl/virtual_machines/${function_vars[0]}/startup
-		curl_post_request
-		
-	else
-		echo "Please provide an id"
-		echo "startup <virtual_machine_id>"
-	fi
+	URI=$baseurl/virtual_machines/${function_vars[0]}/startup
+	curl_post_request
 }
 
 shutdown_function(){
-
-	if [ ${#function_vars[@]} -gt "0" ]
-	then 
-		URI=$baseurl/virtual_machines/${function_vars[0]}/shutdown
-		curl_post_request
-	else
-		echo "Please provide an id"
-		echo "startup <virtual_machine_id>"
-	fi
+	URI=$baseurl/virtual_machines/${function_vars[0]}/shutdown
+	curl_post_request
 }
 
 test_function(){
@@ -244,15 +168,15 @@ test_function(){
 
 
 
-curl_get_no_std_out(){
-	results=`curl $curlOpts -s $curlOpts\
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X GET $URI;`
-	process_results "$results"
-}
+#curl_get_no_std_out(){
+#	results=`curl $curlOpts -s $curlOpts\
+#	-u $user:$password \
+#	-H "Accept: application/json" \
+#	-H "Content-Type:application/json" \
+#	--fail --show-error \
+#	-X GET $URI;`
+#	process_results "$results"
+#}
 
 curl_get_request(){
 	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
@@ -265,29 +189,17 @@ curl_get_request(){
 }
 
 curl_post_request(){
-	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X POST $URI;`
-	process_results "$results"
-}
-
-curl_post_with_send(){
-#		params='{"virtual_machine":{'$1'}}'
-# -w "%{http_code}"
-		results=`curl -sL -i $curlOpts\
+		results=`curl -sL -w "%{http_code}" $curlOpts\
 		-u $user:$password \
 		-H "Accept: application/json" \
 		-H "Content-Type:application/json" \
-		--fail --show-error \
+		 --show-error \
 		-X POST --data "$1" $URI;`
 		process_results "$results"
 }
 
 curl_delete_request(){
-results=`curl -sL -w "%{http_code}" $curlOpts\
+	results=`curl -sL -w "%{http_code}" $curlOpts\
 		-u $user:$password \
 		-H "Accept: application/json" \
 		-H "Content-Type:application/json" \
@@ -301,19 +213,27 @@ curl_put_request(){
 		-u $user:$password \
 		-H "Accept: application/json" \
 		-H "Content-Type:application/json" \
-		--fail --show-error \
+		 --show-error \
 		-X PUT --data "$1" $URI;`
 		process_results "$results"
 }
 
 process_results(){
-len=$1
-len=$((${#results} - 3))
+		len=$1
+		len=$((${#results} - 3))
 		code=${results:$len:3}
 		body=${results:0:len}
-		if [ $code -eq 201 ] || [ $code -eq 204 ] || [ $code -eq 200 ] 
+		if [ $code -eq 201 ] || [ $code -eq 204 ]
 		then
 			echo Success
+		elif [ $code -eq 200 ] #get requests are requesting info
+		then
+			if [ $format -eq "1" ]
+			then
+				format_string "$body"
+			else
+				echo -e "$body"
+			fi
 		else
 			if [ ${#body} -gt "0" ]
 			then
@@ -328,8 +248,7 @@ parse_config(){
 	while read line || [[ -n "$line" ]];
 		do
 		case $line in
-		\#*)
-#			Ignore Comments
+		\#*) #Ignore Comments
 		;;
 		url*=*)
 			baseurl=${line#*=}
@@ -352,7 +271,9 @@ input_check(){
 	fi
 }
 
-echoerr() { echo "$@" 1>&2; }
+echoerr(){
+ echo "$@" 1>&2; 
+}
 
 args=()
 for i in "$@"; do
@@ -419,69 +340,54 @@ done
 key_vals=${key_vals%,}
 
 case $command in
+	delete|start|startup|reboot|build|edit)
+		check_for_vmid
+		input_check
+		;;
+	create|ls|list|get|search|status|status|test)
+		input_check
+		;;
+esac
+
+case $command in
    
 	create)
-		input_check
 		create_function
-		exit
 		;;
 	get)
-		input_check
 		get_function
-		exit
 		;;
 	ls|list)
-		input_check
 		overview_function
-		exit
 		;;
 	search)
-		input_check
 		search_function
-		exit
 		;;		
 	edit)
-		input_check
 		edit_function
-		exit
 		;;
 	delete)
-		input_check
 		delete_function
-		exit
 		;;
 	reboot)
-		input_check
 		reboot_function
-		exit
 		;;
 	start|startup)
-		input_check
 		startup_function
-		exit
 		;;
 	status)
-		input_check
 		status_function
-		exit
 		;;
 	stop)
-		input_check
 		stop_function
-		exit
 		;;
 	shutdown)
-		input_check
 		shutdown_function
-		exit
 		;;
 	test)
-		input_check
 		test_function
-		exit
 		;;
 	build)
-		input_check
 		build_function
 		exit
 		;;
