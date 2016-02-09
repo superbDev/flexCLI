@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# set -x
 # FlexCloud Command Tool
 baseurl='https://mycp.superb.net/flexapi'
 
@@ -63,8 +63,8 @@ help_function(){
 	primary_disk_size* - set the disk space for this VS
 	swap_disk_size* - set swap space. There is no swap disk for Windows-based VSs
 	type_of_format - type of filesystem - ext4. For Linux templates, you can choose ext4 file system instead of the ext3 default one
-	primary_disk_type - set the storage type 'HDD' or 'SSD' for the primary disk
-	swap_disk_type - set the storage type 'HDD' or 'SSD' for the swap disk
+	primary_disk_type - set the storage type "HDD" or "SSD" for the primary disk
+	swap_disk_type - set the storage type "HDD" or "SSD" for the swap disk
 	primary_network_id - the ID of the primary network. Optional parameter that can be used only if it is assigned to the network zone
 	primary_network_group_id - the ID of the primary network group. Optional parameter
 	required_automatic_backup - set 1 if you need automatic backups
@@ -79,32 +79,25 @@ help_function(){
 }
 
 create_function(){
-	createVals='{"virtual_machine":{'$keyVals'}}'
-	results=`curl -sL $curlOpts \
+	createVals='{"virtual_machine":{'$key_vals'}}'
+	results=`curl -sL $curlOpts -w "%{http_code}" \
 	-u $user:$password \
 	-H "Accept: application/json" \
 	-H "Content-Type:application/json" \
-	--fail --show-error \
 	-X POST --data "$createVals" $baseurl/virtual_machines;`
 	process_results "$results"
 }
 
 edit_function(){
-	editVals='{"virtual_machine":{'$keyVals'}}'
+	editVals='{"virtual_machine":{'$key_vals'}}'
 	URI=$baseurl/virtual_machines;
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$URI/${functionVars[0]}
-		results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		--fail --show-error \
-		-X PUT --data "$editVals" $URI;`
-		process_results "$results"
+		URI=$URI/${function_vars[0]}
+		curl_put_request $editVals 
 	else
-		echo "Please provide an id"
+		echo "Please provide an id:"
 		echo "edit <virtual_machine_id>"
 	fi
 
@@ -112,38 +105,26 @@ edit_function(){
 
 delete_function(){
 	URI=$baseurl/virtual_machines;
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$URI/${functionVars[0]}
-		results=`curl -sL -w "%{http_code}" $curlOpts\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		--fail --show-error \
-		-X DELETE $URI;`
-		process_results "$results"
+		URI=$URI/${function_vars[0]}
+		curl_delete_request
 	else
-		echo "Please provide an id"
+		echo "Please provide an id:"
 		echo "delete <virtual_machine_id>"
 
 	fi
 }
 
 build_function(){
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$baseurl/virtual_machines/${functionVars[0]}/build
-		createVals='{"virtual_machine":{'$keyVals'}}'
-		results=`curl -sL -w "%{http_code}"\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		--fail --show-error \
-		-X POST --data "$createVals" $URI;`
-		process_results "$results"
+		URI=$baseurl/virtual_machines/${function_vars[0]}/build
+		createVals='{"virtual_machine":{'$key_vals'}}'
+		curl_post_with_send $createVals
 	else
 
-	echo "Please provide an id"
+	echo "Please provide an id:"
 	echo "build <virtual_machine_id>"
 
 	fi
@@ -153,26 +134,20 @@ get_function(){
 
 	URI=$baseurl/virtual_machines;
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$URI/${functionVars[0]}
+		URI=$URI/${function_vars[0]}
 	fi
-	results=`curl -s $curlOpts \
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X GET $URI;`
-	process_results "$results"
+	curl_get_no_std_out
 }
 
 overview_function(){
 
 	URI=$baseurl/virtual_machines/overview
 	
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI="$URI"/${functionVars[0]}
+		URI="$URI"/${function_vars[0]}
 	fi
 	results=`curl -s $curlOpts \
 	-u $user:$password \
@@ -185,18 +160,12 @@ overview_function(){
 
 reboot_function(){
 
-if [ ${#functionVars[@]} -gt "0" ]
+if [ ${#function_vars[@]} -gt "0" ]
 then 
-	URI=$baseurl/virtual_machines/${functionVars[0]}/reboot
-	results=`curl -sL -w "%{http_code}" $curlOpts \
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X POST --data "$createVals" $URI;`
-	process_results "$results"
+	URI=$baseurl/virtual_machines/${function_vars[0]}/reboot
+	curl_post_request
 else
-
+	echo 
 	echo "Please provide an id"
 	echo "reboot <virtual_machine_id>"
 
@@ -207,16 +176,10 @@ search_function(){
 
 URI=$baseurl/virtual_machines;
 
-if [ ${#functionVars[@]} -gt "0" ]
+if [ ${#function_vars[@]} -gt "0" ]
 then 
-	URI=$URI?q=${functionVars[0]}
-	results=`curl $curlOpts \
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X GET $URI;`
-	process_results "$results"
+	URI=$URI?q=${function_vars[0]}
+	curl_get_no_write
 else
 	echo no label provided to search for.
 fi
@@ -226,54 +189,35 @@ status_function(){
 
 	URI=$baseurl/virtual_machines;
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$URI/${functionVars[0]}
+		URI=$URI/${function_vars[0]}
 	fi
 
 	URI=$URI/status
-	results=`curl -s $curlOpts\
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X GET $URI;`
-	process_results "$results"
+	curl_get_no_std_out
 }
 
 stop_function(){
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-	URI=$baseurl/virtual_machines/${functionVars[0]}/stop
-	results=`curl $curlOpts -sL -w "%{http_code}"\
-	-u $user:$password \
-	-H "Accept: application/json" \
-	-H "Content-Type:application/json" \
-	--fail --show-error \
-	-X POST $URI;`
-	process_results "$results";
+	URI=$baseurl/virtual_machines/${function_vars[0]}/stop
+	curl_post_request
 	
 	else
-	echo "Please provide an id"
-	echo "stop <virtual_machine_id>"
-
+		echo "Please provide an id"
+		echo "stop <virtual_machine_id>"
 	fi
 }
 
 
 startup_function(){
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$baseurl/virtual_machines/${functionVars[0]}/startup
-		results=`curl $curlOpts -sL -w "%{http_code}"\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		--fail --show-error \
-		-X POST $URI;`
-		process_results "$results";
+		URI=$baseurl/virtual_machines/${function_vars[0]}/startup
+		curl_post_request
 		
 	else
 		echo "Please provide an id"
@@ -283,16 +227,10 @@ startup_function(){
 
 shutdown_function(){
 
-	if [ ${#functionVars[@]} -gt "0" ]
+	if [ ${#function_vars[@]} -gt "0" ]
 	then 
-		URI=$baseurl/virtual_machines/${functionVars[0]}/shutdown
-		results=`curl $curlOpts -sL -w "%{http_code}"\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		--fail --show-error \
-		-X POST $URI;`
-		process_results "$results"
+		URI=$baseurl/virtual_machines/${function_vars[0]}/shutdown
+		curl_post_request
 	else
 		echo "Please provide an id"
 		echo "startup <virtual_machine_id>"
@@ -301,7 +239,13 @@ shutdown_function(){
 
 test_function(){
 	URI=$baseurl/test
-	results=`curl $curlOpts -sL -w "%{http_code}"\
+	curl_get_request
+}
+
+
+
+curl_get_no_std_out(){
+	results=`curl $curlOpts -s $curlOpts\
 	-u $user:$password \
 	-H "Accept: application/json" \
 	-H "Content-Type:application/json" \
@@ -310,7 +254,59 @@ test_function(){
 	process_results "$results"
 }
 
-proccess_results(){
+curl_get_request(){
+	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
+	-u $user:$password \
+	-H "Accept: application/json" \
+	-H "Content-Type:application/json" \
+	--fail --show-error \
+	-X GET $URI;`
+	process_results "$results"
+}
+
+curl_post_request(){
+	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
+	-u $user:$password \
+	-H "Accept: application/json" \
+	-H "Content-Type:application/json" \
+	--fail --show-error \
+	-X POST $URI;`
+	process_results "$results"
+}
+
+curl_post_with_send(){
+#		params='{"virtual_machine":{'$1'}}'
+# -w "%{http_code}"
+		results=`curl -sL -i $curlOpts\
+		-u $user:$password \
+		-H "Accept: application/json" \
+		-H "Content-Type:application/json" \
+		--fail --show-error \
+		-X POST --data "$1" $URI;`
+		process_results "$results"
+}
+
+curl_delete_request(){
+results=`curl -sL -w "%{http_code}" $curlOpts\
+		-u $user:$password \
+		-H "Accept: application/json" \
+		-H "Content-Type:application/json" \
+		--fail --show-error \
+		-X DELETE $URI;`
+		process_results "$results"
+}
+curl_put_request(){
+
+	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
+		-u $user:$password \
+		-H "Accept: application/json" \
+		-H "Content-Type:application/json" \
+		--fail --show-error \
+		-X PUT --data "$1" $URI;`
+		process_results "$results"
+}
+
+process_results(){
 len=$1
 len=$((${#results} - 3))
 		code=${results:$len:3}
@@ -349,9 +345,9 @@ parse_config(){
 }
 
 input_check(){
-	if [ "$user" == 'null'] || [ "$password" == 'null' ]
+	if [ "$user" == 'null' ] || [ "$password" == 'null' ]
 	then
-		echo 'missing user/password use the -u and -p flags: -u <account id> -p <api key> or include them in a configuration file using --config="flexConfig.ini"'
+		echoerr 'missing user/password use the -u and -p flags: -u <account id> -p <api key> or include them in a configuration file using --config="flexConfig.ini"'
 		exit 1
 	fi
 }
@@ -396,7 +392,7 @@ while [ $j -lt $arrayLength ]
 			baseurl=${baseurl//[$'\t\r\n']}
 			j=$(($j + 1))
 		;;
-		build|create|delete|edit|help|ls|list|get|search|shutdown|status|status|stop|startup|test|reboot)
+		build|create|delete|edit|help|ls|list|get|search|shutdown|status|status|stop|start|startup|test|reboot)
 			command=${args[$j]}
 			j=$(($j + 1))
 		;;
@@ -410,7 +406,7 @@ while [ $j -lt $arrayLength ]
 				key=${key#--}
 				key=${key%=*}
 				val=${val#--*=}
-				keyVals=$keyVals'"'$key'"':'"'$val'",'
+				key_vals=$key_vals'"'$key'"':'"'$val'",'
 				j=$(($j + 1))
 			else
 				function_vars+=($input)
@@ -420,7 +416,7 @@ while [ $j -lt $arrayLength ]
 	esac
 done
 
-key_vals=${keyVals%,}
+key_vals=${key_vals%,}
 
 case $command in
    
@@ -459,7 +455,7 @@ case $command in
 		reboot_function
 		exit
 		;;
-	startup|start)
+	start|startup)
 		input_check
 		startup_function
 		exit
