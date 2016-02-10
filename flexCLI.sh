@@ -1,13 +1,11 @@
 #!/bin/bash
-#set -x
 # FlexCloud Command Tool
 baseurl='https://mycp.superb.net/flexapi'
 
 user='null'
 password='null'
-
 format="0"
-#formats returned results to be more human readible
+
 format_string(){
 	results="$1"
 	results="${results//':{'/':{
@@ -203,29 +201,29 @@ curl_put_request(){
 }
 
 process_results(){
-		len=$1
-		len=$((${#results} - 3))
-		code=${results:$len:3}
-		body=${results:0:len}
-		if [ $code -eq 201 ] || [ $code -eq 204 ] || [ "$command" = "test" ]
+	len=$1
+	len=$((${#results} - 3))
+	code=${results:$len:3}
+	body=${results:0:len}
+	if [ $code -eq 201 ] || [ $code -eq 204 ] || [ "$command" = "test" ]
+	then
+		echo Success
+	elif [ $code -eq 200 ] #get requests are requesting info
+	then
+		if [ $format -eq "1" ]
 		then
-			echo Success
-		elif [ $code -eq 200 ] #get requests are requesting info
-		then
-			if [ $format -eq "1" ]
-			then
-				format_string "$body"
-			else
-				echo -e "$body"
-			fi
+			format_string "$body"
 		else
-			if [ ${#body} -gt "0" ]
-			then
-				echoerr "Error With Request:"$body
-			else 
-				echoerr "Request Error"
-			fi
+			echo -e "$body"
 		fi
+	else
+		if [ ${#body} -gt "0" ]
+		then
+			echoerr "Error With Request:"$body
+		else 
+			echoerr "Request Error"
+		fi
+	fi
 }
 
 parse_config(){
@@ -233,16 +231,16 @@ parse_config(){
 		do
 		case $line in
 		\#*) #Ignore Comments
-		;;
+			;;
 		url*=*)
 			baseurl=${line#*=}
-		;;
+			;;
 		user*=*)
 			user=${line#*=}
-		;;
+			;;
 		password*=*)
 			password=${line#*=}
-		;;			
+			;;			
 		esac
 	done <$1	
 }
@@ -273,34 +271,34 @@ while [ $j -lt $arrayLength ]
 		-u)
 			user=${args[(($j+1))]}
 			j=$(($j + 2))
-		;;
+			;;
 		-p)
 			password=${args[(($j+1))]}
 			j=$(($j + 2))
-		;;
+			;;
 		-b)
 			baseurl=${args[(($j+1))]}
 			j=$(($j + 2))
-		;;
+			;;
 		-f)
 			format="1"
 			j=$(($j + 1))
-		;;
+			;;
 		-d)
 			curlOpts=$curlOpts" -i"
 			j=$(($j + 1))
-		;;
+			;;
 		--config=*)
 			val=${args[$j]}
 			val=${val#--*=}
 			parse_config $val
 			baseurl=${baseurl//[$'\t\r\n']}
 			j=$(($j + 1))
-		;;
+			;;
 		build|create|delete|edit|help|ls|list|get|search|shutdown|status|status|stop|start|startup|test|reboot)
 			command=${args[$j]}
 			j=$(($j + 1))
-		;;
+			;;
 		*)
 			temp=$(($arrayLength - 1))
 			input=${args[$j]}
@@ -373,7 +371,6 @@ case $command in
 		;;
 	build)
 		build_function
-		exit
 		;;
 	help | -h)
 		help_function
@@ -382,8 +379,8 @@ case $command in
 	*)
 		echo 'Command not recognized!'
 		help_function
-			exit
-			;;
+		exit 1
+		;;
 esac
 
 
