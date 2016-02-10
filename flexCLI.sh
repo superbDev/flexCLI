@@ -94,8 +94,6 @@ edit_function(){
 	curl_put_request "$editVals"
 }
 
-
-
 delete_function(){
 	URI=$baseurl/virtual_machines/${function_vars[0]};
 	curl_delete_request
@@ -150,7 +148,6 @@ stop_function(){
 	curl_post_request
 }
 
-
 startup_function(){
 	URI=$baseurl/virtual_machines/${function_vars[0]}/startup
 	curl_post_request
@@ -166,18 +163,6 @@ test_function(){
 	curl_get_request
 }
 
-
-
-#curl_get_no_std_out(){
-#	results=`curl $curlOpts -s $curlOpts\
-#	-u $user:$password \
-#	-H "Accept: application/json" \
-#	-H "Content-Type:application/json" \
-#	--fail --show-error \
-#	-X GET $URI;`
-#	process_results "$results"
-#}
-
 curl_get_request(){
 	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
 	-u $user:$password \
@@ -189,13 +174,13 @@ curl_get_request(){
 }
 
 curl_post_request(){
-		results=`curl -sL -w "%{http_code}" $curlOpts\
-		-u $user:$password \
-		-H "Accept: application/json" \
-		-H "Content-Type:application/json" \
-		 --show-error \
-		-X POST --data "$1" $URI;`
-		process_results "$results"
+	results=`curl -sL -w "%{http_code}" $curlOpts\
+	-u $user:$password \
+	-H "Accept: application/json" \
+	-H "Content-Type:application/json" \
+	 --show-error \
+	-X POST --data "$1" $URI;`
+	process_results "$results"
 }
 
 curl_delete_request(){
@@ -205,17 +190,16 @@ curl_delete_request(){
 		-H "Content-Type:application/json" \
 		--fail --show-error \
 		-X DELETE $URI;`
-		process_results "$results"
+	process_results "$results"
 }
 curl_put_request(){
-
 	results=`curl $curlOpts -sL -w "%{http_code}" $curlOpts\
 		-u $user:$password \
 		-H "Accept: application/json" \
 		-H "Content-Type:application/json" \
 		 --show-error \
 		-X PUT --data "$1" $URI;`
-		process_results "$results"
+	process_results "$results"
 }
 
 process_results(){
@@ -223,7 +207,7 @@ process_results(){
 		len=$((${#results} - 3))
 		code=${results:$len:3}
 		body=${results:0:len}
-		if [ $code -eq 201 ] || [ $code -eq 204 ]
+		if [ $code -eq 201 ] || [ $code -eq 204 ] || [ "$command" = "test" ]
 		then
 			echo Success
 		elif [ $code -eq 200 ] #get requests are requesting info
