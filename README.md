@@ -114,7 +114,7 @@ Let’s say we decide we want to shutdown “hosteria” (at the bottom), we get
 We can then use another “ls” call to ensure any pending changes:
 
 ```
-	/usr/local/flexCLI-1.1$ ./flexCLI.sh ls --config="flexConfig.ini"
+	/usr/local/flexCLI-<version>$ ./flexCLI.sh ls --config="flexConfig.ini"
 	|--id--|--------label-------|---ip-address---|--memory--|-storage-|---status---|
 	|   511|          hostOmatic|   192.168.000.1|       500|       31|     running|
 	|   561|         emailServer|   192.168.000.1|      1500|        7|    building|
