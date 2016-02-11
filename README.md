@@ -27,7 +27,7 @@ Available Commands
 Visit https://confluence.dev.superb.net/display/AD/Flex+Cloud+VM+Control
 You will see a link to download the script. Click the link to download the latest version, save it to an appropriate directory like /usr/local/. Alternatively you can use wget to download the latest release.
 
-Check releases for the latest release then substitue the release version for <version>
+Check releases for the latest release then substitue the release version for \<version\>
 
 In your terminal, navigate to desired directory download and then unpack:
 
