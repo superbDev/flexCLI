@@ -30,8 +30,8 @@ In your terminal, navigate to desired directory download and then unpack:
 
 ```
   $ cd /usr/local
-  /usr/local$ wget https://github.com/superbDev/flexCLI/archive/<version_number>.tar.gz
-  /usr/local$ tar -zxvf <version_number>.tar.gz
+  /usr/local$ wget https://github.com/superbDev/flexCLI/archive/<version>.tar.gz
+  /usr/local$ tar -zxvf <version>.tar.gz
 ```
 
 ## 2. Authentication
@@ -40,8 +40,8 @@ When using the flexCLI tool it is necessary to provide your basic authentication
 You can provide the credentials when making each request using –u <accountID> –p <API Key> flags. Test your credentials with the “test” request:
 
 ```
-  $ cd /usr/local/flexCLI-<version_number> 
-  /usr/local/flexCLI-1.1$ ./flexCLI.sh test -u 712345 -p 7519caea9926a0227debb2e36bc08f012b52dee6
+  $ cd /usr/local/flexCLI-<version> 
+  /usr/local/flexCLI-<version>$ ./flexCLI.sh test -u 712345 -p 7519caea9926a0227debb2e36bc08f012b52dee6
 ```
 
 ### Alternatively you can store your configuration in a separate file.
@@ -63,7 +63,7 @@ When you’re ready to start executing commands, check out the available command
 Here is an example using the FlexCLI to create a new server. 
 
  ```
- /usr/local/flexCLI-<version_number>$ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza" --label="zaza" --primary_disk_size="5" --memory="500"
+ /usr/local/flexCLI-<version>$ ./flexCLI.sh create --config=flexConfig.ini --primary_disk_type=SSD --template_label="CentOS 6.7 x64" --hostname="zaza" --label="zaza" --primary_disk_size="5" --memory="500"
 ```  
 
 The required parameters used are:
@@ -107,7 +107,7 @@ You can see how much memory and storage they have, get ip addresses, and retriev
 Let’s say we decide we want to shutdown “hosteria” (at the bottom), we get the id 589 and then call the stop command:
 
 ``` 
-	/usr/local/flexCLI-<version_number>$ ./flexCLI.sh stop 589 --config="flexConfig.ini"
+	/usr/local/flexCLI-<version>$ ./flexCLI.sh stop 589 --config="flexConfig.ini"
 	Success
 ```
 
